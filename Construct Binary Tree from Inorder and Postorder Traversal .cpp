@@ -1,68 +1,42 @@
-/*Given inorder and postorder traversal of a tree, construct the binary tree.
+/*
+Given inorder and postorder traversal of a tree, construct the binary tree.
 
 Note:
 You may assume that duplicates do not exist in the tree.
 */
 
-#include <iostream>
-#include <vector>
-#include <list>
-#include <algorithm>
-using namespace std;
-
-struct TreeNode {
-	int val;
-	TreeNode *left;
-	TreeNode *right;
-	TreeNode(int x) : val(x), left(NULL), right(NULL) {}
-};
-
 class Solution {
+
+map<int,int> indexMap;
+
 public:
 	TreeNode *buildTree(vector<int> &inorder, vector<int> &postorder) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
-		if(inorder.size() == 0)
-			return NULL;
-		Clean();
-		Build(inorder,postorder,0,postorder.size()-1,postorder.size()-1);
-		return allNodes[0];
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+	if( inorder.size() == 0)
+		return NULL;
+	indexMap.clear();
+	int len = inorder.size();
+	for( int i = 0 ;i < len ;i ++)
+	{
+		indexMap[inorder[i]] = i;
+	}
+         return buildTree(postorder, len-1, inorder, 0,len -1);
 	}
 
-private:
-	TreeNode * Build(vector<int> &inorder, vector<int> &postorder,int start ,int end,int postPos)
+	TreeNode * buildTree(vector<int > & postorder , int postIndex, vector<int> & inorder, int inBegin, int inEnd)
 	{
-		TreeNode *node = new TreeNode(postorder[postPos]);
-		allNodes.push_back(node);
-		int pos = find(inorder.begin()+start, inorder.begin()+end,postorder[postPos]) - inorder.begin();
-		if(pos == end)
-			node->right = NULL;
-		else
-			node ->right = Build(inorder, postorder,pos+1,end,postPos-1);
-		if(pos == start)
-			node-> left = NULL;
-		else
-			node ->left = Build(inorder,postorder,start,pos-1,postPos-(end - pos ) - 1);
-		return node;
+		TreeNode * head = new TreeNode( postorder[postIndex]);
+		int inIndex = indexMap[postorder[postIndex]];
+		int distance = inEnd - inIndex;
+		if( inIndex > inBegin)
+		{
+			head-> left = buildTree( postorder, postIndex- distance -1, inorder, inBegin,inIndex-1);
+		}
+		if( inIndex < inEnd)
+		{
+			head->right = buildTree(postorder, postIndex -1 ,inorder, inIndex+1, inEnd);
+		}
+		return head;
 	}
-
-	void Clean()
-	{
-		int len = allNodes.size();
-		for(int i = 0; i < len ;i++)
-			delete allNodes[i];
-		allNodes.clear();
-	}
-	vector<TreeNode*> allNodes;
 };
-
-int main()
-{
-	Solution s;
-	int in[]={1,2,3,4};
-	int post[]={2,3,1,4};
-
-	vector<int> inVec(in,in+sizeof(in)/sizeof(in[0]));
-	vector<int > outvec(post,post+sizeof(post)/sizeof(post[0]));
-	TreeNode* tree = s.buildTree(inVec,outvec);
-}

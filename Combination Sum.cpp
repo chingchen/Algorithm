@@ -29,8 +29,6 @@ public:
 private:
 	void Init(int t)
 	{
-		for(int i = 0 ; i< SIZE ;i++)
-			allSteps[i].clear();
 		ret.clear();
 		index = 0;
 		target = t;
@@ -50,8 +48,7 @@ private:
 			int left = GetLeft();
 			if(left == 0)
 			{
-				allSteps[index] = steps;
-				ret.push_back(allSteps[index]);
+				ret.push_back(steps);
 				index++;
 				return ;
 			}
@@ -76,7 +73,6 @@ private:
 	}
 private:
 	vector<int> steps;
-	vector<int> allSteps[SIZE];
 	int index;
 	int target;
 	vector<vector<int> > ret;
