@@ -4,60 +4,39 @@ Given a singly linked list where elements are sorted in ascending order, convert
 
 class Solution {
 public:
-	TreeNode * sortedListToBST(ListNode* head) {
+    TreeNode *sortedListToBST(ListNode *head) {
         // Start typing your C/C++ solution below
         // DO NOT write int main() function
-
-		Init();
-		ListNode * p = head;
-		int len = 0;
-		while (p != NULL) 
-		{
-			len++;
-			p= p->next;
-		}
-		if(len == 0)
-			return NULL;
-		return CreateTree(head,len);
+      return  sortedListToBST(head, NULL);
     }
-
-private :
-	TreeNode * CreateTree(ListNode* node,int len)
-	{
-		if( len == 1)
-		{
-			TreeNode * t = new TreeNode(node->val);
-			t->right = t->left = NULL;
-			allNodes.push_back(t);
-			return t;
-		}
-		else
-		{
-			ListNode * cur= node;
-			int i = 1;
-			do
-			{
-				node = node->next;
-			}while(++i <= len/2);
-			TreeNode * t = new TreeNode(node->val);
-
-			t->left = CreateTree(cur,len/2);
-			if(len-len/2-1== 0)
-				t->right = NULL;
-			else
-				t->right = CreateTree(node->next,len-len/2-1);
-			allNodes.push_back(t);
-			return t;
-
-		}
-	}
-
-    void Init()
+    
+    TreeNode * sortedListToBST(ListNode * start, ListNode * end)
     {
-      /*  for(int i =0 ; i< allNodes.size();i++)
-            delete allNodes[i];*/
-        allNodes.clear();
+        if( start != end)
+	{
+            ListNode * middle = FindMiddle(start, end);
+            TreeNode * head = new TreeNode( middle->val);
+            if( middle != start)
+                head -> left = sortedListToBST(start,middle);
+            if( middle != end)
+                head -> right = sortedListToBST(middle->next, end);
+        }
+        else
+            return NULL;       
     }
+    
+    ListNode* FindMiddle(ListNode * start, ListNode * end)
+    {
+        ListNode * oneStep = start;
+        ListNode * twoStep  = start;
+        while( twoStep->next != end && twoStep->next->next != end)
+        {
+            oneStep = oneStep->next;
+            twoStep = twoStep->next->next;
+        }
+        return oneStep;
+    }
+};
 
     vector<TreeNode*> allNodes;
 
