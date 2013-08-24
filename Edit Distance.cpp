@@ -8,76 +8,69 @@ c) Replace a character
 */
 
 class Solution {
+    
+    map<string ,map<string,int> > mem;
+    
 public:
-	int minDistance(string word1, string word2) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
-		minSteps = -1;
-		return minDis(word1,word2,0);
-	}
+    int minDistance(string word1, string word2) 
+    {
+        if(word1.length() == 0)
+            return word2.length();
+        if(word2.length() == 0)
+            return word1.length();
+            
+        mem.clear();
+        
+        return minDis(word1, word2);
+    }
 
-private:
-	map<string ,map<string,int> > record;
-	unsigned int minSteps;
-private:
-	void FillRecord(string& orgWord, string & desWord,int value)
-	{
-		if(record.find(desWord) == record.end())
-		{
-			map<string,int> m;
-			m[orgWord] = value;
-			record[desWord] = m;
-		}
-		else
-			record[desWord][orgWord]= value;
-	}
+    int minDis(string word1, string word2) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+        
+        if( mem.find(word1) != mem.end() && mem[word1].find(word2) != mem[word1].end())
+        {
+            return  mem[word1][word2];
+        }
+        
+        int ret = 0;
+        if(word1.length() == 0)
+        {
+            ret = word2.length();
+            mem[word1][word2] = ret;
+            return ret;
+        }
+            
+        int i = 0;
+        while( i < word1.length() && i < word2.length())
+        {
+            if(word1[i] != word2[i])
+            {
+                break;
+            }
+            i++;
+        }
+        
+        if( i == word2.length())
+        {
+            ret =word1.substr(i).length();
+             mem[word1][word2] = ret;
+            return ret;            
+        }
 
-	int minDis(string & orgWord,string & desWord ,int step)
-	{
-		int ret;
-
-		if(record.find(desWord) != record.end() && record[desWord].find(orgWord) != record[desWord].end())
-			return record[desWord][orgWord];
-
-		if(orgWord.size() == 0 && desWord.size() == 0)
-		{
-			if(minSteps > step)
-				minSteps = step;
-		}
-		if(orgWord.size() == 0)
-		{
-			ret = desWord.size();
-			FillRecord(orgWord,desWord,ret);
-			return ret	;
-		}
-		if(desWord.size() == 0)
-		{
-			ret = orgWord.size();
-			FillRecord(orgWord,desWord,ret);
-			return ret;
-		}
-
-		if( step > minSteps)
-			return 1;
-
-		string orgWordSub = orgWord.size()==1?string(""): orgWord.substr(1);
-		string desWordSub = desWord.size()==1?string(""): desWord.substr(1);
-
-		if(orgWord[0] == desWord[0])
-		{
-			int doNoneSetps = minDis( orgWordSub,desWordSub,step); 
-			ret =doNoneSetps;
-			FillRecord(orgWord,desWord,ret);
-			return ret;
-		}
-		else
-		{
-			int addSteps = minDis(orgWord,desWordSub,step+1) + 1;
-			int delSteps = minDis(orgWordSub,desWord,step+1) + 1;
-			int replaceSteps = minDis( orgWordSub,desWordSub,step+1) + 1; 
-			ret = min(min(delSteps,addSteps),replaceSteps);
-			FillRecord(orgWord,desWord,ret);		
-			return ret;
-		}
-	}
+        if( i == word1.length())
+        {
+            ret =  word2.substr(i).length();
+             mem[word1][word2] = ret;
+            return ret;            
+        }
+        
+        int insert = minDis(word1.substr(i), word2.substr(i+1)) + 1;
+        int deleted = minDis(word1.substr(i+1), word2.substr(i)) + 1;
+        int replaced = minDis(word1.substr(i+1), word2.substr(i+1)) + 1;
+        
+        ret = min(insert,min(deleted,replaced));
+         mem[word1][word2] = ret;
+        return ret;
+    }
 };

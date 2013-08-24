@@ -14,43 +14,37 @@ The number of ways decoding ¡°12¡å is 2.
 */
 
 class Solution {
+map<string, int> caches;
 public:
-	int numDecodings(string s)
+    int numDecodings(string s) {
+        // Start typing your C/C++ solution below
+        // DO NOT write int main() function
+	if( s.length() < 1)
+		return 0;
+	if(caches.find(s) != caches.end())
 	{
-		if(s.size() == 0)
-			return 0;
-		else
-			return numDecoding(s);
+		return caches[s];
 	}
-private:
-	int numDecoding(string s) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
-		if(s.size() == 0)
-			return 1;
-		if(record.find(s) != record.end())
-			return record[s];
-		if( CanDecod(s,1))
+	if(s[0] == '0')
+		return caches[s]= 0;
+
+	if(s.length() > 1)
+	{
+		if( s[0] == '1' || ( s[0] == '2' && s[1] < '7'))
 		{
-			int one = numDecoding(s.substr(1));
-			int two = 0;
-			if( CanDecod(s,2))
-				two = numDecoding(s.substr(2));
-			return record[s] = one + two;
-		}  
-		else 
-			return 0 ;
-	}
-private:
-	bool CanDecod(const string & s , int num)
-	{
-		if(s.size() == 0 || num > s.size())
-			return false;
-		int n = atoi(s.substr(0,num).c_str());
-		if ( n >26 || n <1 )
-			return false;
+			int sum1 =  numDecodings(s.substr(1));
+			int sum2 = 1;
+			if( s.length() > 2)
+			{
+				sum2 = numDecodings(s.substr(2));
+			}
+			return sum1 + sum2;
+		}
 		else
-			return true;
+		{
+			return caches[s] = numDecodings(s.substr(1));
+		}
 	}
-	map<string,int> record;
+	return caches[s] = 1;        
+    }
 };
