@@ -1,40 +1,54 @@
+/*
+Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+
+For example,
+"A man, a plan, a canal: Panama" is a palindrome.
+"race a car" is not a palindrome.
+
+Note:
+Have you consider that the string might be empty? This is a good question to ask during an interview.
+
+For the purpose of this problem, we define empty string as valid palindrome.
+*/
+
 class Solution {
 public:
-	bool isPalindrome(string s) {
+    bool isPalindrome(string s) {
 		// Start typing your C/C++ solution below
 		// DO NOT write int main() function
-		if(s.size() ==1 || s.size() == 0)
+		int len = s.length();
+		if (len == 0)
 			return true;
-		unsigned start = 0 ,end = s.size() -1;
-		while(start <= end)
+		int start = 0, end = len - 1;
+		while (start < end)
 		{
-			while(s[start] > 'z' || ( s[start] >'Z' &&  s[start] < 'a') || (s[start] < 'A' && s[start] >'9') || s[start]<'0')
-			{
-				start ++;
-				if( start >= end) 
-					return true;
-			}
-			while(s[end] > 'z' || ( s[end] >'Z' &&  s[end] < 'a') || (s[end] < 'A' && s[end] >'9') || s[end]<'0')
-			{
+			while (start <= end && !IsAlphanumeric(s[start]))
+				start++;
+			if (start >= end)
+				return true;
+			while (start <= end && !IsAlphanumeric(s[end]))
 				end--;
-				if( start > end) 
+			if (s[start] != s[end])
+			{
+				int big = max(s[start], s[end]);
+				int small = min(s[start], s[end]);
+				if (big - small != 32)
 					return false;
 			}
-
-			if(start == end)
-				return true;
-
-			int d1, d2;
-			if(s[start]>='a') d1 = s[start]-'a';
-			else   			  d1 = s[start]-'A';
-			if(s[end]>='a')   d2 = s[end]-'a';
-			else			  d2 = s[end]-'A';
-
-			if(d1!=d2)
-				return false;
 			start++;
 			end--;
 		}
 		return true;
+	}
+
+	bool IsAlphanumeric(char c)
+	{
+		if (c >= '0' && c <= '9')
+			return true;
+		if (c >= 'a' && c <= 'z')
+			return true;
+		if (c >= 'A' && c <= 'Z')
+			return true;
+		return false;
 	}
 };
