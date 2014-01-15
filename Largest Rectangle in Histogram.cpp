@@ -50,7 +50,7 @@ public:
 	return curMax;
     }
 
-private:ac
+private:
 	struct StackElem
 	{
 		int mostLeft;
