@@ -9,72 +9,42 @@ Here is an example:
 S = ¡°rabbbit¡±, T = ¡°rabbit¡±
 */
 
-class Solution {
-public:
-	int numDistinct(string S, string T) {
-		// Start typing your C/C++ solution below
-		// DO NOT write int main() function
-		return FindNum(S,T);
+class Solution 
+{
 
+    map<string,map<string,int> > cache;
+
+public:
+   
+	int numDistinct(string S, string T) 
+	{
+
+		cache.clear();
+		return distinct(S,T);
 	}
 
-private:
-	map<string ,map<string,int> > record;
-	int  FindNum(string & s, string & t)
+	int distinct(string s, string t)
 	{
-		if(record.find(t) != record.end() && record[t].find(s) != record[t].end())
-			return record[t][s];
-
-		int ret = 0;
-		for( size_t i = 0 ; i < s.size();)
+		int res = 0;
+		if(cache.find(s) != cache.end() && cache[s].find(t) != cache[s].end())
 		{
-			size_t pos ;
-			if(( pos = s.find(t[0],i)) != string::npos)
-			{
-				if(t.size() == 1)
-					ret += 1;
-				else
-				{
-					if(pos == s.size())
-					{
-						if(record.find(t) == record.end())
-						{
-							map<string,int> m;
-							m[s] = ret;
-							record[t] = m;
-						}
-						else
-							record[t][s]= ret;
-						return ret;
-					}
-					string s1= s.substr(pos+1);
-					string t1= t.substr(1);
-					ret += FindNum(s1,t1);
-				}
-				i = pos+1;
-			}
-			else
-			{
-				if(record.find(t) == record.end())
-				{
-					map<string,int> m;
-					m[s] = ret;
-					record[t] = m;
-				}
-				else
-					record[t][s]= ret;
-				return ret;
-			}
-
+			return cache[s][t];
 		}
-		if(record.find(t) == record.end())
+		if(t.length() == 0 )
+			return 1;
+		if(s.length() ==  0)
+			return 0;
+		if(s[0] == t[0])
 		{
-			map<string,int> m;
-			m[s] = ret;
-			record[t] = m;
+			res +=  distinct(s.substr(1),t.substr(1));
+			
 		}
-		else
-			record[t][s]= ret;
-		return ret;
+		size_t  pos = s.find(t[0],1);
+		if( pos != string::npos)
+		{
+			res += distinct(s.substr(pos), t);
+		}		
+		
+		return cache[s][t] = res;		
 	}
 };
